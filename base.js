@@ -4,14 +4,20 @@
 //First JavaScript Base
 //2016.4.15
 
-function Base()
+//调用
+function $(_this)
+{
+	return new Base(_this);
+}
+
+function Base(_this)
 {
 	//获取节点或者节点集合
 	this.elements = [];
+	if(_this != undefined)
+		this.elements[0] = _this;
+
 }
-
-
-
 
 //获取ID元素节点
 Base.prototype.getId = function(id)
@@ -31,12 +37,14 @@ Base.prototype.getTagName = function(tag)
 	return this;
 }
 
-//调用
-function $()
+//获取单一节点
+Base.prototype.getElement = function(num)
 {
-	return new Base();
+	var element = this.elements[num];
+	this.elements = [];
+	this.elements[0] = element;
+	return this;
 }
-
 
 //设置样式
 Base.prototype.css = function(attr,value)
@@ -151,26 +159,58 @@ Base.prototype.click = function(fn)
 	return this;
 }
 
-
-
-//获取单一节点
-Base.prototype.getElement = function(num)
+//设置鼠标移入移出效果
+Base.prototype.hover = function(fn1,fn2)
 {
-	var element = this.elements[num];
-	this.elements = [];
-	this.elements[0] = element;
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].onmouseover = fn1;
+		this.elements[i].onmouseout = fn2;
+	}
+	return this;
+}
+
+//设置显示
+Base.prototype.show = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].style.display = 'block';
+	}
 	return this;
 }
 
 
+//设置隐藏
+Base.prototype.hide = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].style.display = 'none';
+	}
+	return this;
+}
 
+//设置对象居中
+Base.prototype.center = function(width,height)
+{
+	var top = (document.documentElement.clientHeight-height)/2;
+	var left = (document.documentElement.clientWidth-width)/2;
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].style.top = top + 'px';
+		this.elements[i].style.left = left + 'px';
+	}
+	return this;
+}
 
+//浏览器缩放事件
+Base.prototype.resize = function(fn)
+{
 
-
-
-
-
-
+	window.onresize = fn;
+	return this;
+}
 
 
 
