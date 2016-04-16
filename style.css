@@ -70,6 +70,8 @@ body{
 	border: 1px solid #ccc;
 	position: absolute;
 	display: none;
+	z-index: 9999;
+	background: #fff;
 }
 #login h2{
 	height: 40px;
@@ -80,6 +82,7 @@ body{
 	background: url(images/header_bg.png) repeat-x;
 	margin: 0 0 20px 0;
 	line-height: 30px;
+	cursor: move;
 }
 #login img{
 	float: right;
@@ -119,5 +122,17 @@ body{
 	font-size: 12px;
 	cursor: pointer;
 }
+
+#screen{
+	position: absolute;;
+	top: 0;
+	left: 0;
+	background: #000;
+	z-index: 9998;
+	filter: alpha(opacity=30);
+	opacity: 0.3;
+}
+
+
 
 

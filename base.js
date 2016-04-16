@@ -123,14 +123,7 @@ Base.prototype.removeClass = function(className)
 Base.prototype.addRule = function(num,selector,cssText,position)
 {
 	var sheet = document.styleSheets[num];
-	if(typeof sheet.insertRule != 'undefined')	//W3C
-	{
-		sheet.insertRule(selector + '{' + cssText + '}',position);
-	}
-	else if(typeof sheet.addRule != 'undefined')	//IE
-	{
-		sheet.addRule(selector,cssText,position);
-	}
+	insertRule(sheet,selector,cssText,position);
 	return this;
 }
 
@@ -138,14 +131,7 @@ Base.prototype.addRule = function(num,selector,cssText,position)
 Base.prototype.removeRule = function(num,index)
 {
 	var sheet = document.styleSheets[num];
-	if(typeof sheet.deleteRule != 'undefined')	//W3C
-	{
-		sheet.deleteRule(index);
-	}
-	else if(typeof sheet.removeRule != 'undefined')	//IE
-	{
-		sheet.removeRule(index);
-	}
+	deleteRule(sheet,index);
 	return this;
 }
 
@@ -207,12 +193,84 @@ Base.prototype.center = function(width,height)
 //浏览器缩放事件
 Base.prototype.resize = function(fn)
 {
+	for(var i=0;i<this.elements.length;i++)
+	{
+		var element = this.elements[i];
+		window.onresize = function(){
+			fn();
+			if(element.offsetLeft>getInner().width-element.offsetWidth)
+				element.style.left = getInner().width-element.offsetWidth + 'px';
+			if(element.offsetTop>getInner().height-element.offsetHeight)
+				element.style.top = getInner().height-element.offsetHeight + 'px';
+		};
+	}
 
-	window.onresize = fn;
+	return this;
+}
+
+//锁屏功能
+Base.prototype.lock = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].style.height = getInner().height + 'px';
+		this.elements[i].style.width = getInner().width + 'px';
+		document.documentElement.style.overflow = 'hidden';
+	}
+	return this;
+}
+
+//解锁功能
+Base.prototype.unlock = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].style.height = 0;
+		this.elements[i].style.width = 0;
+		document.documentElement.style.overflow = 'auto';
+	}
 	return this;
 }
 
 
-
-
-
+//拖拽功能
+Base.prototype.drag = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i].onmousedown = function(ev)
+		{
+			preDef(ev);	//兼容旧版火狐
+			var _this = this;
+			var e = getEvent(ev);
+			var x = e.clientX - _this.offsetLeft;
+			var y = e.clientY - _this.offsetTop;
+			if(typeof _this.setCapture != 'undefined')	//兼容IE bug
+				_this.setCapture();
+			document.onmousemove = function(ev)
+			{
+				var e = getEvent(ev);
+				var left = e.clientX- x;
+				var top = e.clientY- y;
+				if(left < 0)
+					left = 0;
+				else if(left > getInner().width - _this.offsetWidth)
+					left = getInner().width - _this.offsetWidth;
+				if(top < 0)
+					top = 0;
+				else if(top > getInner().height - _this.offsetHeight)
+					top = getInner().height - _this.offsetHeight;
+				_this.style.left = left + 'px';
+				_this.style.top = top + 'px';
+			}
+			document.onmouseup = function()
+			{
+				this.onmousemove = null;
+				this.onmouseup = null;
+				if(typeof _this.releaseCapture != 'undefined')	//兼容IE bug
+					_this.releaseCapture();
+			}
+		};
+	}
+	return this;
+}

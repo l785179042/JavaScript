@@ -11,16 +11,25 @@ window.onload = function()
 
 	//登陆框
 	$().getId('login').center(350,250).resize(function(){
-		$().getId('login').center(350,250);
+		if($().getId('login').css('display') == 'block')
+		{
+			$().getId("screen").lock();
+		}
 	});
 
 	$().getClass("login").click(function(){
+		$().getId('login').center(350,250);
 		$().getId('login').css('display','block');
+		$().getId("screen").lock();
 	});
 
 	$().getClass("close").click(function(){
 		$().getId('login').css('display','none');
+		$().getId("screen").unlock();
 	});
 
+
+	//拖拽
+	$().getId("login").drag();
 
 }
