@@ -5,40 +5,141 @@
 //2016.4.15
 
 //调用
-function $(_this)
+function $(args)
 {
-	return new Base(_this);
+	return new Base(args);
 }
 
-function Base(_this)
+//核心库
+function Base(args)
 {
 	//获取节点或者节点集合
 	this.elements = [];
-	if(_this != undefined)
-		this.elements[0] = _this;
 
+	if(typeof args == 'string')
+	{
+		//css模拟
+		if(args.indexOf(' ') != -1)
+		{
+			var elements = args.split(' ');
+			var childElements = [];
+			var node = [];
+			for (var i = 0; i < elements.length; i++) {
+				if(node.length == 0)node.push(document);
+				switch(elements[i].charAt(0))
+				{
+					case'#':
+						childElements = [];
+						childElements.push(this.getId(elements[i].substring(1)));
+						node = childElements;
+						break;
+					case'.':
+						childElements = [];
+						for (var j = 0; j < node.length; j++) {
+							var temps = this.getClass(elements[i].substring(1),node[j]);
+							for (var k = 0; k < temps.length; k++) {
+								childElements.push(temps[k]);
+							}
+						}
+						node = childElements;
+						break;
+					default:
+						childElements = [];
+						for (var j = 0; j < node.length; j++) {
+							var temps = this.getTagName(elements[i],node[j]);
+							for (var k = 0; k < temps.length; k++) {
+								childElements.push(temps[k]);
+							}
+						}
+						node = childElements;
+				}
+			}
+			this.elements = childElements;
+		}
+		//find模拟
+		else
+		{
+			switch(args.charAt(0))
+			{
+				case'#':
+					this.elements.push(this.getId(args.substring(1)));
+					break;
+				case'.':
+					this.elements = this.getClass(args.substring(1));
+					break;
+				default:
+					this.elements = this.getTagName(args);
+			}
+		}
+		
+	}
+	else if(typeof args == 'object')
+	{
+		if(args != undefined)
+			this.elements[0] = args;
+	}
+}
+
+//设置CSS选择器子节点
+Base.prototype.find = function(str)
+{
+	var childElements = [];
+	for(var i=0;i<this.elements.length;i++)
+	{
+		switch(str.charAt(0))
+		{
+			case'#':
+				childElements.push(document.getElementById(str.substring(1)));
+				break;
+			case'.':
+				var temps = this.getClass(str.substring(1),this.elements[i]);
+				for(var j=0;j<temps.length;j++)
+					childElements.push(temps[j]);
+				break;
+			default:
+				// var tags = this.elements[i].getElementsByTagName(str);
+				// for(var j=0;j<tags.length;j++)
+				// {
+				// 	childElements.push(tags[j]);
+				// }
+				var temps = this.getTagName(str,this.elements[i]);
+				for(var j=0;j<temps.length;j++)
+					childElements.push(temps[j]);
+		}
+	}
+	this.elements = childElements;
+	return this;
 }
 
 //获取ID元素节点
 Base.prototype.getId = function(id)
 {
-	this.elements.push(document.getElementById(id));
-	return this;
+	return document.getElementById(id);
 }
 
 //获取元素集合
-Base.prototype.getTagName = function(tag)
+Base.prototype.getTagName = function(tag,parentNode)
 {
-	var tags = document.getElementsByTagName(tag);
+	var node = null;
+	var temps = [];
+	if(parentNode != undefined)
+		node = parentNode;
+	else
+		node = document;
+	var tags = node.getElementsByTagName(tag);
 	for(var i=0;i<tags.length;i++)
-	{
-		this.elements.push(tags[i]);
-	}
-	return this;
+		temps.push(tags[i]);
+	return temps;
 }
 
-//获取单一节点
+//获取单一节点，并返回该节点
 Base.prototype.getElement = function(num)
+{
+	return this.elements[num];
+}
+
+//获取单一节点，并返回Base对象
+Base.prototype.eq = function()
 {
 	var element = this.elements[num];
 	this.elements = [];
@@ -81,20 +182,23 @@ Base.prototype.html = function(inner)
 }
 
 //获取class节点数组
-Base.prototype.getClass = function(className,idName)
+Base.prototype.getClass = function(className,parentNode)
 {
-	if(arguments.length == 1)
-		var all = document.getElementsByTagName("*");
+	var node = null;
+	var temps = [];
+	if(parentNode != undefined)
+		node = parentNode;
 	else
-		var all = document.getElementById(idName).getElementsByTagName("*");
+		node = document;
+	var all = node.getElementsByTagName('*');
 	for(var i=0;i<all.length;i++)
 	{
 		if(all[i].className == className)
 		{
-			this.elements.push(all[i]);
+			temps.push(all[i]);
 		}
 	}
-	return this;
+	return temps;
 }
 
 //添加class
@@ -150,8 +254,8 @@ Base.prototype.hover = function(fn1,fn2)
 {
 	for(var i=0;i<this.elements.length;i++)
 	{
-		this.elements[i].onmouseover = fn1;
-		this.elements[i].onmouseout = fn2;
+		addEvent(this.elements[i],'mouseover',fn1);
+		addEvent(this.elements[i],'mouseout',fn2);
 	}
 	return this;
 }
@@ -180,8 +284,8 @@ Base.prototype.hide = function()
 //设置对象居中
 Base.prototype.center = function(width,height)
 {
-	var top = (document.documentElement.clientHeight-height)/2;
-	var left = (document.documentElement.clientWidth-width)/2;
+	var top = (getInner().height-height)/2;
+	var left = (getInner().width-width)/2;
 	for(var i=0;i<this.elements.length;i++)
 	{
 		this.elements[i].style.top = top + 'px';
@@ -216,6 +320,7 @@ Base.prototype.lock = function()
 		this.elements[i].style.height = getInner().height + 'px';
 		this.elements[i].style.width = getInner().width + 'px';
 		document.documentElement.style.overflow = 'hidden';
+		addEvent(window,'scroll',scrollTop);
 	}
 	return this;
 }
@@ -228,49 +333,17 @@ Base.prototype.unlock = function()
 		this.elements[i].style.height = 0;
 		this.elements[i].style.width = 0;
 		document.documentElement.style.overflow = 'auto';
+		removeEvent(window,'scroll',scrollTop);
 	}
 	return this;
 }
 
+
+//插件入口
+Base.prototype.extend = function(name,fn)
+{
+	Base.prototype[name] = fn;
+}
 
 //拖拽功能
-Base.prototype.drag = function()
-{
-	for(var i=0;i<this.elements.length;i++)
-	{
-		this.elements[i].onmousedown = function(ev)
-		{
-			preDef(ev);	//兼容旧版火狐
-			var _this = this;
-			var e = getEvent(ev);
-			var x = e.clientX - _this.offsetLeft;
-			var y = e.clientY - _this.offsetTop;
-			if(typeof _this.setCapture != 'undefined')	//兼容IE bug
-				_this.setCapture();
-			document.onmousemove = function(ev)
-			{
-				var e = getEvent(ev);
-				var left = e.clientX- x;
-				var top = e.clientY- y;
-				if(left < 0)
-					left = 0;
-				else if(left > getInner().width - _this.offsetWidth)
-					left = getInner().width - _this.offsetWidth;
-				if(top < 0)
-					top = 0;
-				else if(top > getInner().height - _this.offsetHeight)
-					top = getInner().height - _this.offsetHeight;
-				_this.style.left = left + 'px';
-				_this.style.top = top + 'px';
-			}
-			document.onmouseup = function()
-			{
-				this.onmousemove = null;
-				this.onmouseup = null;
-				if(typeof _this.releaseCapture != 'undefined')	//兼容IE bug
-					_this.releaseCapture();
-			}
-		};
-	}
-	return this;
-}
+

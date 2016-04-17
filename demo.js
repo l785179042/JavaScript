@@ -1,7 +1,12 @@
 
+
+
 window.onload = function()
 {
-	$().getId("box").css("background","green");
-	$().getTagName("p").css("color","red").css("background","black").html("good");
-	
+	$('p #span').css('color','blue');
+	$('div .ds').css('color','blue');
+	$('div #ds').css('color','green');
 }
+
+
+

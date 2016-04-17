@@ -1,4 +1,7 @@
 
+
+
+
 window.onload = function()
 {
 	$().getClass('member').hover(function(){
@@ -30,6 +33,6 @@ window.onload = function()
 
 
 	//拖拽
-	$().getId("login").drag();
+	$().getId("login").drag([$().getTagName('h2').getElement(0)]);
 
 }
