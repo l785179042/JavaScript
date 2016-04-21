@@ -1,5 +1,6 @@
 
-$().extend('drag',function(tags){
+$().extend('drag',function(){
+	var tags = arguments;
 	for(var i=0;i<this.elements.length;i++)
 	{
 		this.elements[i].onmousedown = function(ev)

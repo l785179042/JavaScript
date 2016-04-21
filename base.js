@@ -78,7 +78,18 @@ function Base(args)
 		if(args != undefined)
 			this.elements[0] = args;
 	}
+	else if (typeof args == 'function') 
+	{
+		this.ready(args);
+	}
 }
+
+//addDomLoaded
+Base.prototype.ready = function(fn)
+{
+	addDomLoaded(fn)
+};
+
 
 //设置CSS选择器子节点
 Base.prototype.find = function(str)
@@ -97,11 +108,6 @@ Base.prototype.find = function(str)
 					childElements.push(temps[j]);
 				break;
 			default:
-				// var tags = this.elements[i].getElementsByTagName(str);
-				// for(var j=0;j<tags.length;j++)
-				// {
-				// 	childElements.push(tags[j]);
-				// }
 				var temps = this.getTagName(str,this.elements[i]);
 				for(var j=0;j<temps.length;j++)
 					childElements.push(temps[j]);
@@ -133,9 +139,21 @@ Base.prototype.getTagName = function(tag,parentNode)
 }
 
 //获取单一节点，并返回该节点
-Base.prototype.getElement = function(num)
+Base.prototype.ge = function(num)
 {
 	return this.elements[num];
+}
+
+//获取首个节点，并返回这个节点对象
+Base.prototype.first = function()
+{
+	return this.elements[0];
+}
+
+//获取结尾节点，并返回这个节点对象
+Base.prototype.last = function()
+{
+	return this.elements[this.elements.length-1];
 }
 
 //获取单一节点，并返回Base对象
@@ -338,6 +356,139 @@ Base.prototype.unlock = function()
 	return this;
 }
 
+//设置动画
+var timer = null;
+Base.prototype.animate = function(object)
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		var element = this.elements[i];
+		var attr = object['attr'] == 'x' ? 'left' : object['attr'] == 'y' ? 'top' : object['attr'] == 'w' ? 'width' : object['attr'] == 'h' ? 'height' : object['attr'] == 'o' ? 'opacity' : object['attr'] != undefined ? object['attr'] : 'left';
+		var start = object['start'] != undefined ? object['start'] : attr == 'opacity' ? parseFloat(getStyle(element,attr))*100 : parseInt(getStyle(element,attr));
+		var t = object['t'] != undefined ? object['t'] : 30;
+		var step = object['step'] != undefined ? object['step'] : 5;
+		
+		var alter = object['alter'];
+		var target = object['target'];
+		var mul = object['mul'];
+
+		if(alter != undefined && target == undefined)
+		{
+			target = alter + start;
+		}
+		else if(alter == undefined && target == undefined && mul == undefined)
+		{
+			throw new Error('the param is wrong');
+		}
+
+
+		var time = t;
+
+		var speed = object['speed'] != undefined ? object['speed'] : 6;
+		var type = object['type'] == 0 ? 'constant' : object['type'] == 1 ? 'buffer' : 'buffer';
+
+		if(start > target)
+			step = -step;
+		if(attr == 'opacity')
+		{
+			element.style.opacity = start/100;
+			element.style.filter = 'alpha(opacity='+start+')';
+		}
+		else
+		{
+			element.style[attr] = start + 'px';
+		}
+
+		if(mul == undefined)
+		{
+			mul = {};
+			mul[attr] = target;
+		}
+
+
+		clearInterval(element.timer);
+		element.timer = setInterval(function()
+		{
+
+			var flag = true;
+
+			for(var i in mul)
+			{
+				attr = i == 'x' ? 'left' : i == 'y' ? 'top' : i == 'w' ? 'width' : i == 'h' ? 'height' : i == 'o' ? 'opacity' : i != undefined ? i : 'left';
+				target = mul[i];
+				if(type == "buffer")
+				{
+					step = attr == 'opacity'? (target-parseFloat(getStyle(element,attr))*100)/speed : (target-parseInt(getStyle(element,attr)))/speed;
+					step = step > 0 ? Math.ceil(step) : Math.floor(step);
+				}
+
+				if(attr == 'opacity')
+				{
+					var temp = parseFloat(getStyle(element,attr))*100;
+					if(step == 0)
+					{
+						setOpacity()
+					}
+					else if(step > 0 && Math.abs(parseFloat(getStyle(element,attr))*100-target) <= Math.abs(step))
+					{
+						setOpacity()
+					}
+					else if(step < 0 && Math.abs(parseFloat(getStyle(element,attr))*100-target) <= Math.abs(step))
+					{
+						setOpacity()
+					}
+					else
+					{
+						element.style.opacity = parseInt(temp + step)/100;
+						element.style.filter = 'alpha(opacity=' + parseInt(temp + step) + ')';
+					}
+
+					if(parseInt(target) != parseInt(parseFloat(getStyle(element,attr))*100))
+						flag = false;
+				}
+				else
+				{
+					if(step == 0)
+					{
+						setTarget();
+					}
+					else if(step > 0 && Math.abs(parseInt(getStyle(element,attr))-target) <= Math.abs(step))
+					{
+						setTarget();
+					}
+					else if(step < 0 && Math.abs(parseInt(getStyle(element,attr))-target) <= Math.abs(step))
+					{
+						setTarget();
+					}
+					else
+					{
+						element.style[attr] = parseInt(getStyle(element,attr))+ step + 'px';
+					}
+
+					if(parseInt(target) != parseInt(getStyle(element,attr)))
+						flag = false;
+				}
+			}
+			if(flag)
+			{
+				clearInterval(element.timer);
+				if(object.fn) object.fn();
+			}
+			
+		},time);
+
+		function setTarget()
+		{
+			element.style[attr] = target + 'px';	
+		}
+		function setOpacity()
+		{
+			element.style.opacity = parseInt(target)/100;
+			element.style.filter = 'alpha(opacity=' + parseInt(target) + ')';
+		}
+	}
+	return this;
+}
 
 //插件入口
 Base.prototype.extend = function(name,fn)
@@ -345,5 +496,5 @@ Base.prototype.extend = function(name,fn)
 	Base.prototype[name] = fn;
 }
 
-//拖拽功能
+
 

@@ -1,0 +1,23 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+#box{
+	width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	background-color: #69c;
+	opacity: 0.3;
+	filter: alpha(opacity=30);
+	/*border: 1px solid black;*/
+}
+
+#back{
+	width: 500px;
+	height: 800px;
+	background-color: #666;
+}
+

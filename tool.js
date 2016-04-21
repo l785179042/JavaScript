@@ -85,7 +85,14 @@ function removeEvent(obj,type,fn)
 	}
 }
 
-
+//跨浏览器获取滚动条位置
+function getScroll()
+{
+	return{
+		top : document.documentElement.scrollTop || document.body.scrollTop,
+		left : document.documentElement.scrollLeft || document.body.scrollLeft
+	}
+}
 
 //跨浏览器获取视窗大小
 function getInner()
@@ -106,6 +113,20 @@ function getInner()
 	}
 }
 
+//跨浏览器获取Style
+function getStyle(element,attr)
+{
+	var value;
+	if(typeof window.getComputedStyle != 'undefined')
+	{
+		value = window.getComputedStyle(element,null)[attr];
+	}
+	else if(typeof element.currentStyle != 'undefined')
+	{
+		value = element.currentStyle[attr];
+	}
+	return value;
+}
 
 //跨浏览器添加link规则
 function insertRule(sheet,selector,cssText,position)
@@ -161,5 +182,26 @@ function scrollTop(){
 	document.body.scrollTop = 0;
 }
 
-
+//DOM加载
+function addDomLoaded(fn)
+{
+	if(document.addEventListener)
+	{
+		addEvent(document,'DOMContentLoaded',function () {
+			fn();
+			removeEvent(document,'DOMContentLoaded',arguments.callee)	
+		})
+	}
+	else
+	{
+		var timer = null;
+		timer = setInterval(function () {
+			try{
+				document.documentElement.doScroll('left');
+				fn();
+			}
+			catch(e){};
+		});
+	}
+}
 
