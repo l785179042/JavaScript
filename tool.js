@@ -154,6 +154,25 @@ function deleteRule(sheet,index)
 	}
 }
 
+//跨浏览器获取innerText
+function getText(element, text) 
+{
+	return (typeof element.textContent == 'string') ? element.textContent:element.innerText;
+}
+
+//跨浏览器获取innerText
+function setText(element, text) 
+{
+	if (typeof element.textContent == 'string') 
+	{
+		element.textContent = text;
+	} 
+	else 
+	{
+		element.innerText = text;
+	}
+}
+
 //获取event对象
 function getEvent(ev)
 {
@@ -203,5 +222,16 @@ function addDomLoaded(fn)
 			catch(e){};
 		});
 	}
+}
+
+//检测某值是否存在于某个数组中
+function inArray(array,value)
+{
+	for(var i in array)
+	{
+		if(array[i] === value)
+			return true;
+	}
+	return false;
 }
 

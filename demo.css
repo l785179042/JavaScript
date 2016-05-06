@@ -9,10 +9,8 @@ body{
 	position: absolute;
 	top: 100px;
 	left: 100px;
-	background-color: #69c;
-	opacity: 0.3;
-	filter: alpha(opacity=30);
-	/*border: 1px solid black;*/
+	background-color: red;
+	border: 1px solid black;
 }
 
 #back{

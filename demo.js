@@ -12,18 +12,15 @@
 // })();
 
 
-addDomLoaded(function(){
-	$("#btn").click(function(){
-		$('#box').animate({
-			'attr':'x',
-			'start':100,
-			'target':500,
-			'step':7,
-			'type':1
-		});
+$(function(){
+	$("#btn").toggle(function(){
+		$("#box").css("background","blue");
+	},function(){
+		$("#box").css("background","red");
+	},function(){
+		$("#box").css("background","green");
 	});
 });
-
 
 
 

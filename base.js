@@ -156,12 +156,42 @@ Base.prototype.last = function()
 	return this.elements[this.elements.length-1];
 }
 
+//获取某组节点的数量
+Base.prototype.length = function()
+{
+	return this.elements.length;
+}
+
 //获取单一节点，并返回Base对象
-Base.prototype.eq = function()
+Base.prototype.eq = function(num)
 {
 	var element = this.elements[num];
 	this.elements = [];
 	this.elements[0] = element;
+	return this;
+}
+
+//获取当前节点的下一个节点
+Base.prototype.next = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i] = this.elements[i].nextSibling;
+		if(this.elements[i] == null) throw new Error("wrong");
+		if(this.elements[i].nodeType == 3)this.next();
+	}
+	return this;
+}
+
+//获取当前节点的上一个节点
+Base.prototype.prev = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i] = this.elements[i].previousSibling;
+		if(this.elements[i] == null) throw new Error("wrong");
+		if(this.elements[i].nodeType == 3)this.next();
+	}
 	return this;
 }
 
@@ -186,6 +216,27 @@ Base.prototype.css = function(attr,value)
 	return this;
 }
 
+//设置表单字段元素
+Base.prototype.form = function(name)
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		this.elements[i] = this.elements[i][name];
+	}
+	return this;
+}
+
+//设置表单字段内容获取
+Base.prototype.value = function(str)
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		if(arguments.length == 0)
+			return this.elements[i].value;
+		this.elements[i].value = str;
+	}
+	return this;
+}
 
 //设置innerHTML
 Base.prototype.html = function(inner)
@@ -195,6 +246,18 @@ Base.prototype.html = function(inner)
 		if(arguments.length == 0)
 			return this.elements[i].innerHTML;
 		this.elements[i].innerHTML = inner;
+	}
+	return this;
+}
+
+//设置innerTEXT
+Base.prototype.text = function(inner)
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		if(arguments.length == 0)
+			return getText(this.elements[i]);
+		setText(this.elements[i],inner);
 	}
 	return this;
 }
@@ -211,7 +274,8 @@ Base.prototype.getClass = function(className,parentNode)
 	var all = node.getElementsByTagName('*');
 	for(var i=0;i<all.length;i++)
 	{
-		if(all[i].className == className)
+		//if(all[i].className == className)
+		if((new RegExp('(\\s|^)' + className + '(\\s|$)')).test(all[i].className))
 		{
 			temps.push(all[i]);
 		}
@@ -267,6 +331,16 @@ Base.prototype.click = function(fn)
 	return this;
 }
 
+//设置事件发生器
+Base.prototype.bind = function(event,fn)
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		addEvent(this.elements[i],event,fn);
+	}
+	return this;
+}
+
 //设置鼠标移入移出效果
 Base.prototype.hover = function(fn1,fn2)
 {
@@ -274,6 +348,21 @@ Base.prototype.hover = function(fn1,fn2)
 	{
 		addEvent(this.elements[i],'mouseover',fn1);
 		addEvent(this.elements[i],'mouseout',fn2);
+	}
+	return this;
+}
+
+//设置点击切换效果
+Base.prototype.toggle = function()
+{
+	for(var i=0;i<this.elements.length;i++)
+	{
+		(function (element,args) {
+			var count = 0;
+			addEvent(element,"click",function(){
+				args[count++ % args.length].call(this);
+			});
+		})(this.elements[i],arguments);
 	}
 	return this;
 }
@@ -396,7 +485,7 @@ Base.prototype.animate = function(object)
 		}
 		else
 		{
-			element.style[attr] = start + 'px';
+			//element.style[attr] = start + 'px';
 		}
 
 		if(mul == undefined)

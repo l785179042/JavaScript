@@ -3,6 +3,13 @@ body{
 	padding: 0;
 	background: url(images/header_bg.png) repeat-x;
 }
+ul,dl,dd,h2,p,form{
+	padding: 0;
+	margin: 0;
+}
+ul li{
+	list-style-type: none;
+}
 #header{
 	width: 900px;
 	height: 30px;
@@ -60,13 +67,208 @@ body{
 }
 
 
-#header .login{
+#header .login, #header .reg{
 	float: right;
 	width: 40px;
 	height: 30px;
 	line-height: 30px;
 	cursor: pointer;
 }
+
+#reg{
+	width: 600px;
+	height: 550px;
+	border: 1px solid #ccc;
+	position: absolute;
+	/*display: none;*/
+	z-index: 9999;
+	background: #fff;
+}
+#reg h2{
+	height: 40px;
+	text-align: center;
+	font-size: 14px;
+	letter-spacing: 1px;
+	color: #666;
+	background: url(images/header_bg.png) repeat-x;
+	margin: 0 0 20px 0;
+	line-height: 30px;
+	cursor: move;
+}
+#reg img{
+	float: right;
+	position:relative;
+	top: 6px;
+	right: 8px;
+	cursor: pointer;
+}
+#reg dl{
+	font-size: 14px;
+	color: #666;
+	margin: 20px;
+	padding: 0 0 0 10px;
+	position: relative;
+}
+#reg dl dd{
+	height: 30px;
+	padding: 5px 0;
+}
+#reg dl dd input.text, #reg dl dd select{
+	width: 200px;
+	height: 25px;
+	border: 1px solid #ccc;
+	background: #fff;
+	font-size: 14px;
+	color: #666;
+}
+#reg dd.birthday select{
+	width: 70px;
+}
+#reg dl dd textarea{
+	width: 360px;
+	height: 100px;
+	background: #fff;
+	border: 1px solid #ccc;
+}
+#reg dl dd.ps{
+	padding: 0 0 0 300px;
+}
+#reg dl dd.ps strong.num{
+	padding: 0 2px;
+}
+#reg dl dd.ps span.clear{
+	color: #06f;
+	cursor: pointer;
+}
+#reg dl dd input.submit{
+	width: 143px;
+	height: 33px;
+	background: url(images/reg.png) no-repeat;
+	border: none;
+	cursor: pointer;
+}
+#reg dl dd span.info,#reg dl dd span.error,#reg dl dd span.succ{
+	display: block;
+	color: #333;
+	font-size: 12px;
+	width: 165px;
+	height: 32px;
+	line-height: 32px;
+	position: absolute;
+	padding: 0 0 0 35px;
+	letter-spacing: 1px;
+	display: none;
+}
+#reg dl dd span.info{
+	background: url(images/reg_info.png) no-repeat;
+}
+#reg dl dd span.error{
+	background: url(images/reg_error.png) no-repeat;
+}
+#reg dl dd span.succ{
+	height: 14px;
+	line-height: 14px;
+	background: url(images/reg_succ.png) no-repeat;
+	padding: 0 0 0  20px;
+	color: green;
+}
+#reg dl dd span.info_user{
+	height: 43px;
+	line-height: 18px;
+	top: 2px;
+	left: 295px;
+	padding-top: 7px;
+	background: url(images/reg_info2.png) no-repeat;
+}
+#reg dl dd span.error_user{
+	top: 2px;
+	left: 295px;
+}
+#reg dl dd span.succ_user{
+	top: 12px;
+	left: 295px;
+}
+#reg dl dd span.info_pass{
+	width: 244px;
+	height: 102px;
+	padding: 4px 0 0 16px;
+	background: url(images/reg_info3.png) no-repeat;
+	top: 5px;
+	left: 295px;
+	letter-spacing: 0;
+}
+#reg dl dd span.info_pass p{
+	color: #666;
+	height: 25px;
+	line-height: 25px;
+	font-size: 8px;
+}
+#reg dl dd span.info_pass p strong.s{
+	color: #ddd;
+}
+#reg dl dd span.error_pass{
+	top: 43px;
+	left: 295px;
+}
+#reg dl dd span.succ_pass{
+	top: 52px;
+	left: 295px;
+}
+#reg dl dd span.info_notpass{
+	top: 83px;
+	left: 295px;
+}
+#reg dl dd span.error_notpass{
+	top: 83px;
+	left: 295px;
+}
+#reg dl dd span.succ_notpass{
+	top: 92px;
+	left: 295px;
+}
+#reg dl dd span.info_ans{
+	top: 163px;
+	left: 295px;
+}
+#reg dl dd span.error_ans{
+	top: 163px;
+	left: 295px;
+}
+#reg dl dd span.succ_ans{
+	top: 172px;
+	left: 295px;
+}
+#reg dl dd span.info_email{
+	top: 203px;
+	left: 295px;
+}
+#reg dl dd span.error_email{
+	top: 203px;
+	left: 295px;
+}
+#reg dl dd span.succ_email{
+	top: 212px;
+	left: 295px;
+}
+#reg dl dd ul.all_email{
+	width: 180px;
+	height: 130px;
+	background: #fff;
+	padding: 5px 10px;
+	position: absolute;
+	top: 233px;
+	left: 80px;
+	border: 1px solid #ccc;
+	display: none;
+}
+#reg dl dd ul.all_email li{
+	height: 25px;
+	line-height: 25px;
+	border-bottom: 1px solid #e5edf2;
+	padding:0 5px;
+	cursor: pointer; 
+}
+
 #login{
 	width: 350px;
 	height: 250px;
@@ -126,6 +328,60 @@ body{
 	cursor: pointer;
 }
 
+#nav{
+	width: 465px;
+	height: 52px;
+	background: url(images/nav_bg.png) no-repeat;
+	margin: 50px auto 0 auto;
+	padding: 0;
+	position: relative;	
+}
+#nav ul{
+	padding: 0;
+	position: absolute;
+}
+#nav ul li{
+	width: 85px;
+	height: 52px;
+	float: left;
+	line-height: 52px;
+	text-align: center;
+	font-weight: bold;
+	list-style: none;
+	cursor: pointer;
+}
+#nav ul.about{
+	margin: 0;
+	z-index: 4;
+	left: 20px;
+}
+#nav ul.black{
+	margin: 0;
+	left: 20px;
+	top: 0px;
+	z-index: 1;
+	color: #333;
+}
+#nav ul.white{
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	z-index: 3;
+	left: 0px;
+	width: 425px;
+}
+#nav div.nav_bg{
+	display: block;
+	width: 85px;
+	height: 52px;
+	background: url(images/nav_over.png) no-repeat 0 11px;
+	position: absolute;
+	top: 0px;
+	left: 20px;
+	z-index: 2;
+	overflow: hidden;
+}
+
 #screen{
 	position: absolute;;
 	top: 0;
@@ -134,6 +390,56 @@ body{
 	z-index: 9998;
 	filter: alpha(opacity=0);
 	opacity: 0;
+}
+
+#main{
+	width: 900px;
+	margin: 50px auto;
+	background: red;
+}
+#sidebar{
+	width: 250px;
+	height: 500px;
+	float: left;
+}
+#sidebar h2{
+	width: 248px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	background: url(images/side_h.png);
+	text-indent: 10px;
+	border: 1px solid #ccc;
+	border-bottom: none;
+	margin: 0;
+	cursor: pointer;
+}
+#sidebar ul{
+	margin: 0 0 10px 0;
+	padding: 0;
+	height: 150px;
+	list-style: none;
+	border: 1px solid #ccc;
+	overflow: hidden;
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+#sidebar ul li{
+	height: 30px;
+	line-height: 30px;
+	background: url(images/arrow4.gif) no-repeat 12px center;
+	text-indent: 30px;
+	font-size: 12px;
+}
+#sidebar ul li a{
+	text-decoration: none;
+	color: #333;
+}
+#index{
+	width: 630px;
+	height: 500px;
+	background: #eee;
+	float: right;
 }
 
 #share{
@@ -255,13 +561,5 @@ body{
 	cursor: pointer;
 }
 
-#test{
-	width: 100px;
-	height: 100px;
-	position: absolute;
-	top: 100px;
-	left: 100px;
-	background: red;
-}
 
 
